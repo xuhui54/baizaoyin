@@ -1,0 +1,182 @@
+<view class="container">
+  <!-- 顶部状态栏 -->
+  <view class="status-bar"></view>
+  
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <image class="search-icon" src="/images/search.svg"></image>
+      <input type="text" placeholder="搜索白噪音" confirm-type="search" bindinput="onSearchInput" />
+    </view>
+  </view>
+  
+  <!-- 分类标签 -->
+  <view class="category-chips">
+    <scroll-view scroll-x="true" class="chips-scroll">
+      <view class="chip {{currentCategory === 'all' ? 'active' : ''}}" bindtap="switchCategory" data-category="all">
+        <text>全部</text>
+      </view>
+      <view class="chip {{currentCategory === 'trending' ? 'active' : ''}}" bindtap="switchCategory" data-category="trending">
+        <text>流行</text>
+      </view>
+      <view class="chip {{currentCategory === 'nature' ? 'active' : ''}}" bindtap="switchCategory" data-category="nature">
+        <text>自然</text>
+      </view>
+      <view class="chip {{currentCategory === 'rain' ? 'active' : ''}}" bindtap="switchCategory" data-category="rain">
+        <text>雨声</text>
+      </view>
+      <view class="chip {{currentCategory === 'animal' ? 'active' : ''}}" bindtap="switchCategory" data-category="animal">
+        <text>动物</text>
+      </view>
+      <view class="chip {{currentCategory === 'city' ? 'active' : ''}}" bindtap="switchCategory" data-category="city">
+        <text>城市</text>
+      </view>
+      <view class="chip {{currentCategory === 'instrument' ? 'active' : ''}}" bindtap="switchCategory" data-category="instrument">
+        <text>乐器</text>
+      </view>
+    </scroll-view>
+  </view>
+  
+  <!-- 内容区域 -->
+  <scroll-view scroll-y="true" class="content-area">
+    <!-- 推荐区域 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">精选推荐</text>
+        <text class="section-more" bindtap="navigateToMore" data-section="featured">更多</text>
+      </view>
+      <scroll-view scroll-x="true" class="featured-scroll">
+        <view class="featured-item" wx:for="{{featuredSounds}}" wx:key="id" bindtap="toggleSound" data-id="{{item.id}}">
+          <image class="featured-image" src="{{item.cover}}"></image>
+          <view class="featured-info">
+            <text class="featured-name">{{item.name}}</text>
+            <text class="featured-desc">{{item.description}}</text>
+          </view>
+          <view class="featured-status {{item.selected ? 'selected' : ''}}">
+            <image src="{{item.selected ? '/images/pause.svg' : '/images/play.svg'}}" class="featured-icon"></image>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+    
+    <!-- 热门白噪音 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">热门白噪音</text>
+        <text class="section-more" bindtap="navigateToMore" data-section="popular">更多</text>
+      </view>
+      <view class="popular-grid">
+        <view class="popular-item" wx:for="{{popularSounds}}" wx:key="id" bindtap="toggleSound" data-id="{{item.id}}">
+          <image class="popular-image" src="{{item.icon}}"></image>
+          <text class="popular-name">{{item.name}}</text>
+          <view class="popular-status {{item.selected ? 'selected' : ''}}">
+            <image src="{{item.selected ? '/images/pause.svg' : '/images/play.svg'}}" class="popular-icon"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 合集 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">白噪音合集</text>
+        <text class="section-more" bindtap="navigateToMore" data-section="collections">更多</text>
+      </view>
+      <scroll-view scroll-x="true" class="collections-scroll">
+        <view class="collection-item" wx:for="{{collections}}" wx:key="id" bindtap="navigateToCollection" data-id="{{item.id}}">
+          <image class="collection-image" src="{{item.cover}}"></image>
+          <view class="collection-info">
+            <text class="collection-name">{{item.name}}</text>
+            <text class="collection-count">{{item.soundCount}}个白噪音</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </scroll-view>
+  
+  <!-- 底部悬浮球 - 已选列表 -->
+  <view class="floating-list" bindtap="showPlayerPanel" wx:if="{{selectedSounds.length > 0}}">
+    <image src="/images/list.svg" class="list-icon"></image>
+    <text class="selected-count">{{selectedSounds.length}}</text>
+  </view>
+  
+  <!-- 底部悬浮球 - 播放/暂停 -->
+  <view class="floating-play {{isPlaying ? 'playing' : ''}}" bindtap="togglePlayPause">
+    <image src="{{isPlaying ? '/images/pause.svg' : '/images/play.svg'}}" class="play-icon"></image>
+  </view>
+  
+  <!-- 播放控制面板 (与首页相同，可以复用) -->
+  <view class="player-panel {{showPanel ? 'show' : ''}}">
+    <view class="panel-header">
+      <text class="panel-title">已选白噪音</text>
+      <view class="panel-close" bindtap="hidePlayerPanel">×</view>
+    </view>
+    
+    <scroll-view scroll-y="true" class="selected-sounds">
+      <block wx:for="{{selectedSounds}}" wx:key="id">
+        <view class="selected-sound-item">
+          <view class="selected-sound-info">
+            <image class="selected-sound-icon" src="{{item.icon}}"></image>
+            <text class="selected-sound-name">{{item.name}}</text>
+          </view>
+          <view class="selected-sound-controls">
+            <slider 
+              class="selected-volume-slider" 
+              min="0" 
+              max="100" 
+              value="{{item.volume}}" 
+              activeColor="#6366f1"
+              backgroundColor="#e5e7eb"
+              block-size="12"
+              bindchange="adjustSelectedVolume"
+              data-id="{{item.id}}"
+            />
+            <view class="selected-sound-actions">
+              <view class="action-btn" bindtap="toggleSoundPlayPause" data-id="{{item.id}}">
+                <image src="{{item.paused ? '/images/play.svg' : '/images/pause.svg'}}" class="action-icon"></image>
+              </view>
+              <view class="action-btn" bindtap="removeSound" data-id="{{item.id}}">
+                <image src="/images/delete.svg" class="action-icon"></image>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+    
+    <view class="panel-controls">
+      <view class="master-volume">
+        <text class="master-volume-label">主音量</text>
+        <slider 
+          class="master-volume-slider" 
+          min="0" 
+          max="100" 
+          value="{{masterVolume}}" 
+          activeColor="#6366f1"
+          backgroundColor="#e5e7eb"
+          block-size="12"
+          bindchange="adjustMasterVolume"
+        />
+      </view>
+      
+      <view class="playback-controls">
+        <view class="playback-btn" bindtap="togglePlayPause">
+          <image src="{{isPlaying ? '/images/pause.svg' : '/images/play.svg'}}" class="playback-icon"></image>
+        </view>
+      </view>
+      
+      <view class="timer-controls">
+        <text class="timer-label">定时</text>
+        <view class="timer-options">
+          <view class="timer-option {{timerDuration === 0 ? 'active' : ''}}" bindtap="setTimer" data-duration="0">关闭</view>
+          <view class="timer-option {{timerDuration === 15 ? 'active' : ''}}" bindtap="setTimer" data-duration="15">15分钟</view>
+          <view class="timer-option {{timerDuration === 30 ? 'active' : ''}}" bindtap="setTimer" data-duration="30">30分钟</view>
+          <view class="timer-option {{timerDuration === 60 ? 'active' : ''}}" bindtap="setTimer" data-duration="60">1小时</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 遮罩层 -->
+  <view class="mask {{showPanel ? 'show' : ''}}" bindtap="hidePlayerPanel"></view>
+</view>

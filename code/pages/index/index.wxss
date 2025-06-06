@@ -1,0 +1,408 @@
+/**index.wxss**/
+
+/* 全局容器 */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f9fafb;
+  position: relative;
+}
+
+/* 顶部状态栏 */
+.header {
+  width: 100%;
+  height: 200rpx;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.status-bar {
+  height: 20px;
+  width: 100%;
+  background-color: transparent;
+}
+
+/* 分类列表 */
+.category-list {
+  padding: 0 20px;
+  margin-bottom: 10px;
+}
+
+.category-scroll {
+  white-space: nowrap;
+  overflow-x: hidden;
+}
+
+.category-item {
+  display: inline-block;
+  padding: 8px 16px;
+  margin: 0 6px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #4b5563;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.category-item.active {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+/* 白噪音列表 */
+.sound-list {
+  flex: 1;
+  width: 92%;
+  padding: 0 18px;
+}
+
+.sound-item {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.sound-item.selected {
+  border-left: 4px solid #6366f1;
+}
+
+.sound-info {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.sound-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.sound-name {
+  font-size: 15px;
+  color: #1f2937;
+  font-weight: 500;
+  margin-right: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sound-controls {
+  flex: 1;
+  margin-left: 10px;
+}
+
+.volume-slider {
+  width: 100%;
+  transition: opacity 0.3s ease;
+}
+
+.volume-slider.hidden {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.volume-slider.visible {
+  opacity: 1;
+  height: auto;
+}
+
+/* 底部悬浮球 - 已选列表 */
+.floating-list {
+  position: fixed;
+  left: 20px;
+  bottom: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.list-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.selected-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background-color: #6366f1;
+  color: #ffffff;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 底部悬浮球 - 播放/暂停 */
+.floating-play {
+  position: fixed;
+  right: 20px;
+  bottom: calc(30px + env(safe-area-inset-bottom));
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #6366f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  transition: all 0.3s ease;
+}
+
+.floating-play.playing {
+  background-color: #4f46e5;
+}
+
+.play-icon {
+  width: 28px;
+  height: 28px;
+  stroke: #ffffff;
+}
+
+/* 播放控制面板 */
+.player-panel {
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  width: 100%;
+  max-height: 90vh;
+  background-color: #ffffff;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 20;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.player-panel.show {
+  transform: translateY(-100%);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.panel-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #1f2937;
+}
+
+.panel-close {
+  font-size: 24px;
+  color: #6b7280;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.selected-sounds {
+  flex: 1;
+  padding: 10px 20px;
+  overflow-y: auto;
+}
+
+.selected-sound-item {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #f9fafb;
+  border-radius: 10px;
+}
+
+.selected-sound-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.selected-sound-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.selected-sound-name {
+  font-size: 14px;
+  color: #1f2937;
+  margin-right: 8px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
+
+.selected-sound-volume {
+  flex: 1;
+  margin: 0 8px;
+}
+
+.selected-volume-slider {
+  width: 100%;
+  margin: 0;
+}
+
+.selected-sound-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background-color: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 8px;
+}
+
+.action-icon {
+  width: 20px;
+  height: 20px;
+  stroke: #6b7280;
+}
+
+.panel-controls {
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.master-volume {
+  margin-bottom: 20px;
+}
+
+.master-volume-label {
+  font-size: 15px;
+  color: #4b5563;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.master-volume-slider {
+  width: 100%;
+}
+
+.playback-controls {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.playback-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: #6366f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.playback-icon {
+  width: 28px;
+  height: 28px;
+  stroke: #ffffff;
+}
+
+.timer-controls {
+  margin-top: 10px;
+}
+
+.timer-label {
+  font-size: 15px;
+  color: #4b5563;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.timer-options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.timer-option {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  margin: 0 4px;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+.timer-option.active {
+  background-color: #6366f1;
+  color: #ffffff;
+}
+
+/* 遮罩层 */
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 15;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+.mask.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 工具函数 */
+.stopPropagation {
+  /* 阻止事件冒泡的辅助类 */
+}
+
+.header {
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

@@ -1,0 +1,345 @@
+/* profile.wxss */
+
+/* 全局容器 */
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f8f8f8;
+  position: relative;
+  padding-bottom: 100rpx;
+}
+
+/* 状态栏 */
+.status-bar {
+  height: 20px;
+  width: 100%;
+  background-color: #fff;
+}
+
+/* 头部 */
+.header {
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 用户信息 */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 0 60rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.avatar-container {
+  position: relative;
+  margin-bottom: 20rpx;
+}
+
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 80rpx;
+  background-color: #f0f0f0;
+}
+
+.edit-avatar {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 50rpx;
+  height: 50rpx;
+  background-color: #8a2be2;
+  border-radius: 25rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-icon {
+  width: 30rpx;
+  height: 30rpx;
+}
+
+.user-name {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.user-id {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.login-btn {
+  margin-top: 20rpx;
+  background-color: #8a2be2;
+  color: #fff;
+  font-size: 28rpx;
+  padding: 10rpx 40rpx;
+  border-radius: 30rpx;
+  border: none;
+}
+
+/* 用户数据 */
+.user-stats {
+  display: flex;
+  justify-content: space-around;
+  padding: 30rpx 0;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 功能菜单 */
+.menu-list {
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
+.menu-section {
+  margin-bottom: 20rpx;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-right: 20rpx;
+}
+
+.menu-text {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.arrow-icon {
+  width: 30rpx;
+  height: 30rpx;
+  color: #ccc;
+}
+
+/* 版本信息 */
+.version-info {
+  text-align: center;
+  padding: 40rpx 0;
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 浮动按钮 */
+.floating-buttons {
+  position: fixed;
+  right: 30rpx;
+  bottom: 120rpx;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+
+.list-button, .play-button {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50rpx;
+  background-color: #8a2be2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20rpx;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.2);
+}
+
+.list-button image, .play-button image {
+  width: 50rpx;
+  height: 50rpx;
+}
+
+/* 播放控制面板 */
+.player-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 30rpx 30rpx 0 0;
+  z-index: 100;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  box-shadow: 0 -4rpx 10rpx rgba(0, 0, 0, 0.1);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-panel.show {
+  transform: translateY(0);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.panel-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.panel-close {
+  font-size: 40rpx;
+  color: #999;
+  padding: 0 20rpx;
+}
+
+.selected-sounds {
+  max-height: 40vh;
+  padding: 0 30rpx;
+}
+
+.selected-sound-item {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.sound-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.sound-icon {
+  width: 60rpx;
+  height: 60rpx;
+  margin-right: 20rpx;
+  border-radius: 10rpx;
+}
+
+.sound-name {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.sound-controls {
+  display: flex;
+  align-items: center;
+}
+
+.sound-volume {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.sound-actions {
+  display: flex;
+  align-items: center;
+}
+
+.sound-play-pause, .sound-delete {
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10rpx;
+}
+
+.sound-play-pause image, .sound-delete image {
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.panel-controls {
+  padding: 30rpx;
+}
+
+.master-volume {
+  margin-bottom: 30rpx;
+}
+
+.volume-label, .timer-label {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.timer-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.timer-button {
+  padding: 10rpx 20rpx;
+  font-size: 24rpx;
+  color: #666;
+  background-color: #f0f0f0;
+  border-radius: 30rpx;
+  text-align: center;
+}
+
+.timer-button.active {
+  background-color: #8a2be2;
+  color: #fff;
+}
+
+.timer-countdown {
+  font-size: 24rpx;
+  color: #8a2be2;
+  text-align: center;
+}
+
+/* 遮罩层 */
+.mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}

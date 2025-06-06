@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>白噪音 - 首页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #6366f1;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .iphone-frame {
+            width: 390px;
+            height: 844px;
+            background-color: white;
+            border-radius: 44px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #6366f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            font-size: 14px;
+        }
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 83px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e5e7eb;
+            padding-bottom: 20px;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #9ca3af;
+            font-size: 10px;
+        }
+        .tab-item.active {
+            color: #6366f1;
+        }
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        .content {
+            height: calc(100% - 44px - 83px);
+            overflow-y: auto;
+            background-color: #f9fafb;
+        }
+        .category-container {
+            display: flex;
+            height: 100%;
+        }
+        .category-list {
+            width: 100px;
+            background-color: #f3f4f6;
+            height: 100%;
+            overflow-y: auto;
+        }
+        .category-item {
+            padding: 16px 12px;
+            text-align: center;
+            font-size: 14px;
+            color: #4b5563;
+            border-left: 3px solid transparent;
+        }
+        .category-item.active {
+            background-color: white;
+            color: #6366f1;
+            border-left: 3px solid #6366f1;
+            font-weight: 600;
+        }
+        .sound-list {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+        .sound-card {
+            background-color: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .sound-card.selected {
+            border: 2px solid #6366f1;
+        }
+        .sound-image {
+            width: 100%;
+            height: 120px;
+            border-radius: 12px;
+            object-fit: cover;
+            margin-bottom: 12px;
+        }
+        .sound-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        .sound-description {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 12px;
+        }
+        .volume-control {
+            display: flex;
+            align-items: center;
+        }
+        .volume-icon {
+            color: #6366f1;
+            margin-right: 8px;
+        }
+        .volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            outline: none;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #6366f1;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .floating-button {
+            position: absolute;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background-color: #6366f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        .floating-button.pulse {
+            animation: pulse 1s;
+        }
+        .mini-player {
+            position: absolute;
+            bottom: 100px;
+            left: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background-color: #6366f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        .popup-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 24px 16px;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .popup-panel.show {
+            transform: translateY(0);
+        }
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .popup-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #1f2937;
+        }
+        .popup-close {
+            color: #6b7280;
+            font-size: 20px;
+        }
+        .selected-sound-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .selected-sound-info {
+            flex: 1;
+            margin: 0 12px;
+        }
+        .selected-sound-title {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+        .selected-sound-controls {
+            display: flex;
+            align-items: center;
+        }
+        .control-button {
+            color: #6366f1;
+            margin-left: 16px;
+            font-size: 18px;
+        }
+        .selected-sound-image {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div>9:41</div>
+            <div>
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi ml-1"></i>
+                <i class="fas fa-battery-full ml-1"></i>
+            </div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="content">
+            <div class="category-container">
+                <!-- 左侧分类列表 -->
+                <div class="category-list">
+                    <div class="category-item active">自然</div>
+                    <div class="category-item">工作</div>
+                    <div class="category-item">城市</div>
+                    <div class="category-item">睡眠</div>
+                    <div class="category-item">冥想</div>
+                </div>
+                
+                <!-- 右侧声音列表 -->
+                <div class="sound-list">
+                    <div class="sound-card selected">
+                        <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="sound-image" alt="雨声">
+                        <div class="sound-title">雨声</div>
+                        <div class="sound-description">轻柔的雨滴声，帮助放松身心，提高专注力</div>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up volume-icon"></i>
+                            <input type="range" class="volume-slider" min="0" max="100" value="70">
+                        </div>
+                    </div>
+                    
+                    <div class="sound-card">
+                        <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="sound-image" alt="海浪">
+                        <div class="sound-title">海浪</div>
+                        <div class="sound-description">舒缓的海浪声，营造宁静的氛围，帮助入睡</div>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up volume-icon"></i>
+                            <input type="range" class="volume-slider" min="0" max="100" value="60">
+                        </div>
+                    </div>
+                    
+                    <div class="sound-card">
+                        <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="sound-image" alt="森林">
+                        <div class="sound-title">森林</div>
+                        <div class="sound-description">大自然的森林环境音，包含鸟叫和微风声</div>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up volume-icon"></i>
+                            <input type="range" class="volume-slider" min="0" max="100" value="50">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部标签栏 -->
+        <div class="tab-bar">
+            <div class="tab-item active">
+                <div class="tab-icon"><i class="fas fa-home"></i></div>
+                <div>首页</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon"><i class="fas fa-compass"></i></div>
+                <div>发现</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon"><i class="fas fa-user"></i></div>
+                <div>我的</div>
+            </div>
+        </div>
+        
+        <!-- 右下角悬浮按钮 -->
+        <div class="floating-button pulse" id="listButton">
+            <i class="fas fa-list"></i>
+        </div>
+        
+        <!-- 左下角播放/暂停按钮 -->
+        <div class="mini-player" id="playButton">
+            <i class="fas fa-play"></i>
+        </div>
+        
+        <!-- 底部弹出面板 -->
+        <div class="popup-panel" id="popupPanel">
+            <div class="popup-header">
+                <div class="popup-title">已选择的白噪音</div>
+                <div class="popup-close" id="closePopup"><i class="fas fa-times"></i></div>
+            </div>
+            
+            <div class="selected-sounds">
+                <div class="selected-sound-item">
+                    <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="selected-sound-image" alt="雨声">
+                    <div class="selected-sound-info">
+                        <div class="selected-sound-title">雨声</div>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up volume-icon"></i>
+                            <input type="range" class="volume-slider" min="0" max="100" value="70">
+                        </div>
+                    </div>
+                    <div class="selected-sound-controls">
+                        <div class="control-button"><i class="fas fa-pause"></i></div>
+                        <div class="control-button"><i class="fas fa-trash"></i></div>
+                    </div>
+                </div>
+                
+                <div class="selected-sound-item">
+                    <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="selected-sound-image" alt="海浪">
+                    <div class="selected-sound-info">
+                        <div class="selected-sound-title">海浪</div>
+                        <div class="volume-control">
+                            <i class="fas fa-volume-up volume-icon"></i>
+                            <input type="range" class="volume-slider" min="0" max="100" value="60">
+                        </div>
+                    </div>
+                    <div class="selected-sound-controls">
+                        <div class="control-button"><i class="fas fa-pause"></i></div>
+                        <div class="control-button"><i class="fas fa-trash"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 点击列表按钮显示弹出面板
+        document.getElementById('listButton').addEventListener('click', function() {
+            document.getElementById('popupPanel').classList.add('show');
+        });
+        
+        // 点击关闭按钮隐藏弹出面板
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('popupPanel').classList.remove('show');
+        });
+        
+        // 播放/暂停按钮切换
+        let isPlaying = false;
+        document.getElementById('playButton').addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                this.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                this.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+        
+        // 点击声音卡片选择/取消选择
+        const soundCards = document.querySelectorAll('.sound-card');
+        soundCards.forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('selected');
+                document.getElementById('listButton').classList.add('pulse');
+                setTimeout(() => {
+                    document.getElementById('listButton').classList.remove('pulse');
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

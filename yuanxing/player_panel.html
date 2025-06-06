@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>白噪音 - 播放控制面板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #6366f1;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .iphone-frame {
+            width: 390px;
+            height: 844px;
+            background-color: white;
+            border-radius: 44px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .status-bar {
+            height: 44px;
+            background-color: #6366f1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            color: white;
+            font-size: 14px;
+        }
+        .tab-bar {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 83px;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e5e7eb;
+            padding-bottom: 20px;
+        }
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #9ca3af;
+            font-size: 10px;
+        }
+        .tab-item.active {
+            color: #6366f1;
+        }
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        .content {
+            height: calc(100% - 44px - 83px);
+            overflow-y: auto;
+            background-color: #f9fafb;
+            position: relative;
+        }
+        .player-panel {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 24px 16px;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 20;
+            height: 70%;
+            overflow-y: auto;
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .panel-title {
+            font-weight: 600;
+            font-size: 20px;
+            color: #1f2937;
+        }
+        .panel-close {
+            color: #6b7280;
+            font-size: 24px;
+        }
+        .selected-sound-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .selected-sound-info {
+            flex: 1;
+            margin: 0 16px;
+        }
+        .selected-sound-title {
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .selected-sound-controls {
+            display: flex;
+            align-items: center;
+        }
+        .control-button {
+            color: #6366f1;
+            margin-left: 16px;
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            background-color: #f3f4f6;
+        }
+        .selected-sound-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+        .volume-control {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .volume-icon {
+            color: #6366f1;
+            margin-right: 8px;
+            font-size: 14px;
+        }
+        .volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 4px;
+            background: #e5e7eb;
+            border-radius: 2px;
+            outline: none;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #6366f1;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .master-controls {
+            margin-top: 32px;
+            padding: 20px;
+            background-color: #f3f4f6;
+            border-radius: 16px;
+        }
+        .master-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        .master-volume {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .master-volume-icon {
+            color: #6366f1;
+            margin-right: 12px;
+            font-size: 20px;
+        }
+        .master-volume-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            outline: none;
+        }
+        .master-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #6366f1;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .master-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+        .master-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #6366f1;
+            font-size: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .master-button.play {
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
+            background-color: #6366f1;
+            color: white;
+            font-size: 28px;
+        }
+        .timer-section {
+            margin-top: 32px;
+            padding: 20px;
+            background-color: #f3f4f6;
+            border-radius: 16px;
+        }
+        .timer-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #1f2937;
+            margin-bottom: 16px;
+        }
+        .timer-options {
+            display: flex;
+            justify-content: space-between;
+        }
+        .timer-option {
+            padding: 12px 16px;
+            background-color: white;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #4b5563;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        .timer-option.active {
+            background-color: #6366f1;
+            color: white;
+        }
+        .empty-space {
+            height: 100px;
+        }
+        .floating-button {
+            position: absolute;
+            bottom: 100px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background-color: #6366f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        .mini-player {
+            position: absolute;
+            bottom: 100px;
+            left: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            background-color: #6366f1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="iphone-frame">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <div>9:41</div>
+            <div>
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi ml-1"></i>
+                <i class="fas fa-battery-full ml-1"></i>
+            </div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="content">
+            <!-- 播放控制面板 -->
+            <div class="player-panel">
+                <div class="panel-header">
+                    <div class="panel-title">已选择的白噪音</div>
+                    <div class="panel-close"><i class="fas fa-times"></i></div>
+                </div>
+                
+                <!-- 已选择的声音列表 -->
+                <div class="selected-sounds">
+                    <div class="selected-sound-item">
+                        <img src="https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="selected-sound-image" alt="雨声">
+                        <div class="selected-sound-info">
+                            <div class="selected-sound-title">雨声</div>
+                            <div class="volume-control">
+                                <i class="fas fa-volume-up volume-icon"></i>
+                                <input type="range" class="volume-slider" min="0" max="100" value="70">
+                            </div>
+                        </div>
+                        <div class="selected-sound-controls">
+                            <div class="control-button"><i class="fas fa-pause"></i></div>
+                            <div class="control-button"><i class="fas fa-trash"></i></div>
+                        </div>
+                    </div>
+                    
+                    <div class="selected-sound-item">
+                        <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="selected-sound-image" alt="海浪">
+                        <div class="selected-sound-info">
+                            <div class="selected-sound-title">海浪</div>
+                            <div class="volume-control">
+                                <i class="fas fa-volume-up volume-icon"></i>
+                                <input type="range" class="volume-slider" min="0" max="100" value="60">
+                            </div>
+                        </div>
+                        <div class="selected-sound-controls">
+                            <div class="control-button"><i class="fas fa-pause"></i></div>
+                            <div class="control-button"><i class="fas fa-trash"></i></div>
+                        </div>
+                    </div>
+                    
+                    <div class="selected-sound-item">
+                        <img src="https://images.unsplash.com/photo-1448375240586-882707db888b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="selected-sound-image" alt="森林">
+                        <div class="selected-sound-info">
+                            <div class="selected-sound-title">森林</div>
+                            <div class="volume-control">
+                                <i class="fas fa-volume-up volume-icon"></i>
+                                <input type="range" class="volume-slider" min="0" max="100" value="50">
+                            </div>
+                        </div>
+                        <div class="selected-sound-controls">
+                            <div class="control-button"><i class="fas fa-pause"></i></div>
+                            <div class="control-button"><i class="fas fa-trash"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 主控制区域 -->
+                <div class="master-controls">
+                    <div class="master-title">主控制</div>
+                    <div class="master-volume">
+                        <i class="fas fa-volume-up master-volume-icon"></i>
+                        <input type="range" class="master-volume-slider" min="0" max="100" value="80">
+                    </div>
+                    <div class="master-buttons">
+                        <div class="master-button"><i class="fas fa-step-backward"></i></div>
+                        <div class="master-button play"><i class="fas fa-pause"></i></div>
+                        <div class="master-button"><i class="fas fa-step-forward"></i></div>
+                    </div>
+                </div>
+                
+                <!-- 定时器设置 -->
+                <div class="timer-section">
+                    <div class="timer-title">定时关闭</div>
+                    <div class="timer-options">
+                        <div class="timer-option">关闭</div>
+                        <div class="timer-option">15分钟</div>
+                        <div class="timer-option active">30分钟</div>
+                        <div class="timer-option">1小时</div>
+                        <div class="timer-option">自定义</div>
+                    </div>
+                </div>
+                
+                <!-- 底部空白区域，确保滚动时内容完全可见 -->
+                <div class="empty-space"></div>
+            </div>
+        </div>
+        
+        <!-- 底部标签栏 -->
+        <div class="tab-bar">
+            <div class="tab-item active">
+                <div class="tab-icon"><i class="fas fa-home"></i></div>
+                <div>首页</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon"><i class="fas fa-compass"></i></div>
+                <div>发现</div>
+            </div>
+            <div class="tab-item">
+                <div class="tab-icon"><i class="fas fa-user"></i></div>
+                <div>我的</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 音量滑块交互
+        const volumeSliders = document.querySelectorAll('.volume-slider');
+        volumeSliders.forEach(slider => {
+            slider.addEventListener('input', function() {
+                const value = this.value;
+                const volumeIcon = this.previousElementSibling;
+                
+                if (value < 1) {
+                    volumeIcon.className = 'fas fa-volume-mute volume-icon';
+                } else if (value < 50) {
+                    volumeIcon.className = 'fas fa-volume-down volume-icon';
+                } else {
+                    volumeIcon.className = 'fas fa-volume-up volume-icon';
+                }
+            });
+        });
+        
+        // 主音量滑块交互
+        const masterVolumeSlider = document.querySelector('.master-volume-slider');
+        masterVolumeSlider.addEventListener('input', function() {
+            const value = this.value;
+            const volumeIcon = document.querySelector('.master-volume-icon');
+            
+            if (value < 1) {
+                volumeIcon.className = 'fas fa-volume-mute master-volume-icon';
+            } else if (value < 50) {
+                volumeIcon.className = 'fas fa-volume-down master-volume-icon';
+            } else {
+                volumeIcon.className = 'fas fa-volume-up master-volume-icon';
+            }
+        });
+        
+        // 定时器选项交互
+        const timerOptions = document.querySelectorAll('.timer-option');
+        timerOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                timerOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+        
+        // 播放/暂停按钮交互
+        const playButton = document.querySelector('.master-button.play');
+        let isPlaying = true;
+        playButton.addEventListener('click', function() {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                this.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                this.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        });
+        
+        // 单个声音控制按钮交互
+        const controlButtons = document.querySelectorAll('.control-button .fa-pause');
+        controlButtons.forEach(button => {
+            let soundPlaying = true;
+            button.parentElement.addEventListener('click', function() {
+                soundPlaying = !soundPlaying;
+                if (soundPlaying) {
+                    this.innerHTML = '<i class="fas fa-pause"></i>';
+                } else {
+                    this.innerHTML = '<i class="fas fa-play"></i>';
+                }
+            });
+        });
+        
+        // 删除按钮交互
+        const deleteButtons = document.querySelectorAll('.control-button .fa-trash');
+        deleteButtons.forEach(button => {
+            button.parentElement.addEventListener('click', function() {
+                const soundItem = this.closest('.selected-sound-item');
+                soundItem.style.opacity = '0.5';
+                setTimeout(() => {
+                    soundItem.style.display = 'none';
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
